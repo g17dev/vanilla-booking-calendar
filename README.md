@@ -1,2 +1,10 @@
-# custom-booking-calendar
-A lightweight, zero-dependency Vanilla JS calendar component tailored for custom booking systems. Features toggleable monthly/weekly views and a fully customizable UI built with CSS Grid.
+# Vanilla Booking Calendar
+
+A high-performance, modular calendar engine built with pure JavaScript. 
+Designed specifically for appointment scheduling and bespoke booking experiences.
+
+## 🚀 Key Features
+*   **Zero Dependencies:** 100% Vanilla JavaScript.
+*   **Hybrid Views:** Seamlessly switch between Monthly Grid and Weekly Scroll views.
+*   **Fully Customizable:** CSS Variables for easy theming (perfect for any brand).
+*   **Lightweight:** Minimal footprint for fast-loading projects.
