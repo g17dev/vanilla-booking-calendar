@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Calendar Custom</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap"
+      rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-..."
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="src/calendar.css">
+</head>
+<body>
+
+    <!-- Agregamos data-view para definir el tipo de visualización -->
+    <div class="booking-calendar" data-view="monthly">
+        
+        <!-- 1. Cabecera: Control de navegación y título -->
+        <header class="calendar-header">
+            <button id="btnPrevious"><i class="fa-solid fa-angle-left"></i></button>
+            <h2 id="dateDisplay">October 2026</h2>
+            <button id="btnNext"><i class="fa-solid fa-angle-right"></i></button>
+        </header>
+
+        <!-- 2. Cuerpo: Donde ocurrirá la magia -->
+        <div class="calendar-body">
+            <!-- Etiquetas de los días (Lun, Mar, etc.) -->
+            <div class="day-names">
+                <div>Dom</div><div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div>
+            </div>
+            
+            <!-- Contenedor para los números de los días (se llenará con JS) -->
+            <div id="daysContainer" class="days-grid"></div>
+        </div>
+
+    </div>
+
+    <script src="src/calendar.js"></script>
+</body>
+</html>

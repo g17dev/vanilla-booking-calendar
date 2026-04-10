@@ -1,0 +1,60 @@
+/* 1. Reset Global */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* Fundamental para que el padding no afecte el ancho */
+}
+
+
+body {
+    font-family: 'Manrope', sans-serif;
+    background-color: #f4f7f6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* 2. Contenedor Principal */
+.booking-calendar {
+    width: 100%;
+    max-width: 900px; /* Tamaño por definir con forme se visualice en pantallas diferentes */
+    max-height: 500px;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #1A1C1C;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.calendar-header #btnPrevious,
+.calendar-header #btnNext {
+    border: none;
+    background: none;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.calendar-header #btnPrevious:hover {
+    transform: scale(1.20);
+}
+
+.calendar-header #btnNext:hover {
+    transform: scale(1.20);
+}
+
+.calendar-header #btnPrevious:active,
+.calendar-header #btnNext:active {
+    transform: scale(0.95); /* Se encoge un poco, simulando profundidad */
+    transition: transform 0.1s; /* Más rápido para que se sienta reactivo al clic */
+}
