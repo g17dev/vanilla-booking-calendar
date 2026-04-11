@@ -46,8 +46,10 @@ function nextMonth(id) {
             yearCurrent = String(yearCurrent);
             monthCurrent = 11;
             dateDisplay.textContent = getDate(monthCurrent, yearCurrent);
+            renderCalendar();
         }
         dateDisplay.textContent = getDate(monthCurrent, yearCurrent);
+        renderCalendar();
     }
     else {
         monthCurrent += 1;
@@ -57,8 +59,10 @@ function nextMonth(id) {
             yearCurrent = String(yearCurrent);
             monthCurrent = 0;
             dateDisplay.textContent = getDate(monthCurrent, yearCurrent);
+            renderCalendar();
         }
         dateDisplay.textContent = getDate(monthCurrent, yearCurrent);
+        renderCalendar();
     }
 }
 
@@ -85,10 +89,6 @@ function renderCalendar() {
     const fechaUltimoDiaMesActual = new Date(Number(yearCurrent), Number(monthCurrent) + 1, 0);
     const ultimoDiaMes = fechaUltimoDiaMesActual.getDay();
 
-    // datos mes proximo
-    const primerDiaSemanaMesProximo = new Date(Number(yearCurrent), Number(monthCurrent+1), 1).getDay();
-
-
     // Bucle para dias del mes anterior
     for (day = totalDiasMesAnterior-diasMesAnterior; day <= totalDiasMesAnterior; day++) {
         const nuevoDia = document.createElement('div');
@@ -107,7 +107,7 @@ function renderCalendar() {
             nuevoDia.textContent = day;
             
             const etiquetaToday = document.createElement('span');
-            etiquetaToday.textContent = "Today";
+            etiquetaToday.textContent = "HOY";
             nuevoDia.appendChild(etiquetaToday);
 
             daysGrid.appendChild(nuevoDia);
