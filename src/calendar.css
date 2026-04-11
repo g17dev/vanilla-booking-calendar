@@ -58,3 +58,12 @@ body {
     transform: scale(0.95); /* Se encoge un poco, simulando profundidad */
     transition: transform 0.1s; /* Más rápido para que se sienta reactivo al clic */
 }
+
+.calendar-body .day-names {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    font-weight: 700;
+    color: rgba(92, 64, 63, 0.6);
+}

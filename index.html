@@ -25,7 +25,7 @@
         <!-- 1. Cabecera: Control de navegación y título -->
         <header class="calendar-header">
             <button id="btnPrevious"><i class="fa-solid fa-angle-left"></i></button>
-            <h2 id="dateDisplay">October 2026</h2>
+            <h2 id="dateDisplay"></h2>
             <button id="btnNext"><i class="fa-solid fa-angle-right"></i></button>
         </header>
 
@@ -33,7 +33,8 @@
         <div class="calendar-body">
             <!-- Etiquetas de los días (Lun, Mar, etc.) -->
             <div class="day-names">
-                <div>Dom</div><div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div>
+                <!-- Manejar esto por JS para que sea dinamico por el idioma -->
+                <div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div>
             </div>
             
             <!-- Contenedor para los números de los días (se llenará con JS) -->
