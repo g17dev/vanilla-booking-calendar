@@ -1,3 +1,4 @@
+const monthInitial = new Date().getMonth();
 let monthCurrent = new Date().getMonth();
 let yearCurrent = new Date().getFullYear()
 const date = new Date();
@@ -100,7 +101,7 @@ function renderCalendar() {
     // Bucle insertar dias
     for (day = 1; day <= totalDiasMesActual; day++) {
 
-        if (day === diaActual) {
+        if (day === diaActual && monthInitial === monthCurrent) {
             const nuevoDia = document.createElement('div');
             nuevoDia.classList.add("day");
             nuevoDia.classList.add("selected");
