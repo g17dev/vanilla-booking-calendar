@@ -38,7 +38,7 @@ function initCalendar() {
         console.log("renderizar vista mensual");
         renderMonthly();
     } else if (currentView === 'weekly') {
-        const weekDays = anchorDate(2025, 3, 11);
+        const weekDays = anchorDate(yearCurrent, monthInitial, date.getDate());
         renderWeekly(weekDays);
     }
 }
@@ -184,8 +184,41 @@ function renderWeekly(weekDays) {
 }
 
 function anchorDate(year, month, day) {
+
     const date = new Date(year, month, day);
-    return Array.from({length: 7}, (_, i) => day-date.getDay() + i );
+    const lastDayMonthCurrent = new Date(year, month+1, 0).getDate(); 
+
+    // Forzar a que la semana empiece en LUNES
+    const dayOfWeek = (date.getDay() + 6) % 7;
+
+    let dias = Array.from({length: 7}, (_, i) => day - dayOfWeek + i).filter(valor => valor > 0 && valor <= lastDayMonthCurrent);
+    
+    if (dias.length < 7) {
+        // Verificar cuantos días faltan
+        const diasFaltantes = (7 - dias.length);
+
+        // Verificar sí es principio o fin de mes
+        if (dias.at(0) === 1) {
+            // Obtener los dias faltantes del mes anterior
+            const lastDayPrevMonth = new Date(year, month, 0).getDate();
+            const missingDays = Array.from({ length: diasFaltantes }, (_, i) =>
+                lastDayPrevMonth - (diasFaltantes - 1 - i)
+            );
+
+            dias = [...missingDays, ...dias];
+        }
+        else if (dias.at(-1) >= 28 || dias.at(-1) <= 31) {
+            // Obtener los dias faltantes del mes proximo
+            const firstDayNextMonth = new Date(year, month+1, 1).getDate();
+
+            const missingDays = Array.from({ length: diasFaltantes }, (_, i) =>
+                firstDayNextMonth + i
+            );
+
+            dias = [...dias, ...missingDays];
+        }
+    }
+    return dias;
 }
 
 function getDate(month, year) {
@@ -249,4 +282,3 @@ daysGrid.addEventListener("click", (e) => {
 dateDisplay.textContent = `${nameMonthsMap.get(date.getMonth())} ${date.getFullYear()}`;
 
 initCalendar();
-anchorDate(2025, 3, 11); // FECHA ACTUAL
