@@ -1,3 +1,4 @@
+// Variables
 const monthInitial = new Date().getMonth();
 let monthCurrent = new Date().getMonth();
 let yearCurrent = new Date().getFullYear()
@@ -18,66 +19,41 @@ const nameMonthsMap = new Map([
 ]);
 const daysWeekSpanish = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
 
-
 // SELECTORES
+const calendar = document.querySelector('.booking-calendar');
 const dateDisplay = document.getElementById("dateDisplay");
 const btnPrevious = document.getElementById("btnPrevious");
 const btnNext = document.getElementById("btnNext");
-const daysNames = document.querySelector(".day-names"); // Nota el punto (.) antes de la clase
+const daysNames = document.querySelector(".day-names");
 const daysGrid = document.getElementById("daysContainer");
+const bodyCalendar = document.querySelector(".calendar-body");
 
 // FUNCIONES
 
-function getDate(month, year) {
-    const newMonth = nameMonthsMap.get(month);
-    return `${newMonth} ${year}`;
-}
-
-function nextMonth(id) {
-    const dateCurrent = dateDisplay.textContent.split(' ');
-    monthCurrent = [...nameMonthsMap.entries()].find(([_, nombre]) => nombre === dateCurrent[0])?.[0];
-    yearCurrent = dateCurrent[1];
-
-    if (id === 'btnPrevious') {
-        monthCurrent -= 1;
-        if (monthCurrent === -1)
-        {
-            yearCurrent = Number(yearCurrent);
-            yearCurrent -= 1;
-            yearCurrent = String(yearCurrent);
-            monthCurrent = 11;
-            dateDisplay.textContent = getDate(monthCurrent, yearCurrent);
-            renderCalendar();
-        }
-        dateDisplay.textContent = getDate(monthCurrent, yearCurrent);
-        renderCalendar();
-    }
-    else {
-        monthCurrent += 1;
-        if (monthCurrent === 12) {
-            yearCurrent = Number(yearCurrent);
-            yearCurrent += 1;
-            yearCurrent = String(yearCurrent);
-            monthCurrent = 0;
-            dateDisplay.textContent = getDate(monthCurrent, yearCurrent);
-            renderCalendar();
-        }
-        dateDisplay.textContent = getDate(monthCurrent, yearCurrent);
-        renderCalendar();
+function initCalendar() {
+    // Leer el modo actual ('monthly' o 'weekly')
+    const currentView = calendar.getAttribute('data-view');
+    
+    if (currentView === 'monthly') {
+        console.log("renderizar vista mensual");
+        renderMonthly();
+    } else if (currentView === 'weekly') {
+        renderWeekly();
     }
 }
 
-function renderDayWeek() {
+function renderMonthly() {
+
+    daysNames.innerHTML = "";
+    daysGrid.innerHTML = "";
+    
+    // Dias de la semanas
     daysWeekSpanish.forEach(dayName => {
         const dayWeek = document.createElement('div');
         dayWeek.classList.add("day-week");
         dayWeek.textContent = dayName;
         daysNames.appendChild(dayWeek);
     });
-}
-
-function renderCalendar() {
-    daysContainer.innerHTML = "";
 
     // datos mes anterior
     const totalDiasMesAnterior = new Date(Number(yearCurrent), Number(monthCurrent-1) + 1, 0).getDate();
@@ -138,10 +114,49 @@ function renderCalendar() {
     }
 }
 
+function getDate(month, year) {
+    const newMonth = nameMonthsMap.get(month);
+    return `${newMonth} ${year}`;
+}
+
+function nextMonth(id) {
+    const dateCurrent = dateDisplay.textContent.split(' ');
+    monthCurrent = [...nameMonthsMap.entries()].find(([_, nombre]) => nombre === dateCurrent[0])?.[0];
+    yearCurrent = dateCurrent[1];
+
+    if (id === 'btnPrevious') {
+        monthCurrent -= 1;
+        if (monthCurrent === -1)
+        {
+            yearCurrent = Number(yearCurrent);
+            yearCurrent -= 1;
+            yearCurrent = String(yearCurrent);
+            monthCurrent = 11;
+            dateDisplay.textContent = getDate(monthCurrent, yearCurrent);
+            renderMonthly();
+        }
+        dateDisplay.textContent = getDate(monthCurrent, yearCurrent);
+        renderMonthly();
+    }
+    else {
+        monthCurrent += 1;
+        if (monthCurrent === 12) {
+            yearCurrent = Number(yearCurrent);
+            yearCurrent += 1;
+            yearCurrent = String(yearCurrent);
+            monthCurrent = 0;
+            dateDisplay.textContent = getDate(monthCurrent, yearCurrent);
+            renderMonthly();
+        }
+        dateDisplay.textContent = getDate(monthCurrent, yearCurrent);
+        renderMonthly();
+    }
+}
 
 // EVENTOS
 btnPrevious.addEventListener("click", () => nextMonth("btnPrevious"));
 btnNext.addEventListener("click", () => nextMonth("btnNext"));
+
 daysGrid.addEventListener("click", (e) => {
     const day = e.target.closest(".day")
 
@@ -158,5 +173,5 @@ daysGrid.addEventListener("click", (e) => {
 
 // INICIALIZACION
 dateDisplay.textContent = `${nameMonthsMap.get(date.getMonth())} ${date.getFullYear()}`;
-renderDayWeek();
-renderCalendar();
+
+initCalendar();
