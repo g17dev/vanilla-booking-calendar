@@ -20,23 +20,17 @@
 <body>
 
     <!-- Agregamos data-view para definir el tipo de visualización -->
-    <div class="booking-calendar" data-view="monthly">
+    <div class="booking-calendar" data-view="weekly">
         
-        <!-- 1. Cabecera: Control de navegación y título -->
         <header class="calendar-header">
             <button id="btnPrevious"><i class="fa-solid fa-angle-left"></i></button>
             <h2 id="dateDisplay"></h2>
             <button id="btnNext"><i class="fa-solid fa-angle-right"></i></button>
         </header>
 
-        <!-- 2. Cuerpo: Donde ocurrirá la magia -->
         <div class="calendar-body">
-            <!-- Etiquetas de los días (Lun, Mar, etc.) -->
-            <div class="day-names">
-                <!-- Manejar esto por JS para que sea dinamico por el idioma -->
-            </div>
-            
-            <!-- Contenedor para los números de los días (se llenará con JS) -->
+            <div class="day-names"></div>
+        
             <div id="daysContainer" class="days-grid"></div>
         </div>
 
