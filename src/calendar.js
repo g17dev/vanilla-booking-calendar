@@ -74,21 +74,32 @@ function renderDayWeek() {
 function renderCalendar() {
     daysContainer.innerHTML = "";
 
+    // datos mes anterior
+    const totalDiasMesAnterior = new Date(Number(yearCurrent), Number(monthCurrent-1) + 1, 0).getDate();
     const primerDiaSemana = new Date(Number(yearCurrent), Number(monthCurrent), 1).getDay();
+    const diasMesAnterior = primerDiaSemana - 2;
     
+    // datos mes actual
     const diaActual = date.getDate();
+    const totalDiasMesActual = new Date(Number(yearCurrent), Number(monthCurrent) + 1, 0).getDate();    
+    const fechaUltimoDiaMesActual = new Date(Number(yearCurrent), Number(monthCurrent) + 1, 0);
+    const ultimoDiaMes = fechaUltimoDiaMesActual.getDay();
 
-    const ultimoDia = new Date(Number(yearCurrent), Number(monthCurrent) + 1, 0).getDate();
-        
-    // Bucle para dias vacios
-    for (day = 1; day < primerDiaSemana; day++) {
+    // datos mes proximo
+    const primerDiaSemanaMesProximo = new Date(Number(yearCurrent), Number(monthCurrent+1), 1).getDay();
+
+
+    // Bucle para dias del mes anterior
+    for (day = totalDiasMesAnterior-diasMesAnterior; day <= totalDiasMesAnterior; day++) {
         const nuevoDia = document.createElement('div');
-        nuevoDia.classList.add("day-empty");
+        nuevoDia.classList.add("day-month-before");
+        nuevoDia.textContent = day;
         daysGrid.appendChild(nuevoDia);
     }
 
     // Bucle insertar dias
-    for (day = 1; day <= ultimoDia; day++) {
+    for (day = 1; day <= totalDiasMesActual; day++) {
+
         if (day === diaActual) {
             const nuevoDia = document.createElement('div');
             nuevoDia.classList.add("day");
@@ -101,8 +112,26 @@ function renderCalendar() {
 
             daysGrid.appendChild(nuevoDia);
         }
+        else if (day > diaActual ) {
+            const nuevoDia = document.createElement('div');
+            nuevoDia.classList.add("day");
+            nuevoDia.textContent = day;
+            daysGrid.appendChild(nuevoDia);
+        }
+        else {
+            const nuevoDia = document.createElement('div');
+            nuevoDia.classList.add("day-deactive");
+            nuevoDia.textContent = day;
+            daysGrid.appendChild(nuevoDia);
+        }
+    }
+
+    const diasProximosMes = 7 - ultimoDiaMes;
+
+    // Bucle para dias del proximo mes
+    for (day = 1; day <= diasProximosMes; day++) {
         const nuevoDia = document.createElement('div');
-        nuevoDia.classList.add("day");
+        nuevoDia.classList.add("day-month-after");
         nuevoDia.textContent = day;
         daysGrid.appendChild(nuevoDia);
     }
