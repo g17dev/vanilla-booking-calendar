@@ -1,6 +1,6 @@
 // src/state.js
 export const state = {
-  view: 'monthly',  // Puede ser 'monthly' o 'weekly'
+  view: 'weekly',  // Puede ser 'monthly' o 'weekly'
   currentDate: new Date() // Fecha de referencia
 };
 

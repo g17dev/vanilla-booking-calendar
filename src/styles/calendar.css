@@ -98,11 +98,18 @@ body {
     gap: 8px
 }
 
-/* VISTA SEMANAL*/
+/* VISTA SEMANAL */
 .booking-calendar[data-view="weekly"] .days-grid {
     display: flex;
+    overflow-x: auto;
     gap: 16px;
-    padding: 20px 0;
+    padding: 20px 5px;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+}
+
+.booking-calendar[data-view="weekly"] .days-grid::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge */
 }
 
 .day-month-before{
@@ -200,9 +207,11 @@ body {
     opacity: 0.6;
 }
 
+/* Los elementos dentro de .days-grid se ajustan al hacer scroll */
 .booking-calendar[data-view="weekly"] .day {
-    flex: 1;
+    flex: 0 0 108px;
     height: 140px;
+    min-width: 108px;
     border-radius: 20px;
     background: #ffffff;
     display: flex;
@@ -211,6 +220,7 @@ body {
     align-items: center;
     padding: 16px;
     transition: transform 0.3s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    scroll-snap-align: start; /* Hace que cada día se ajuste al inicio del contenedor al hacer scroll */
 }
 
 .booking-calendar[data-view="weekly"] .day .day-name,

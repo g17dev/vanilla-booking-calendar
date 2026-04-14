@@ -9,6 +9,20 @@ const bookingCalendar = document.querySelector('.booking-calendar');
 
 // VARIABLES
 const daysWeekSpanish = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
+const nameMonthsMap = new Map([
+  [0, "Enero"],
+  [1, "Febrero"],
+  [2, "Marzo"],
+  [3, "Abril"],
+  [4, "Mayo"],
+  [5, "Junio"], 
+  [6, "Julio"],
+  [7, "Agosto"],
+  [8, "Septiembre"],
+  [9, "Octubre"],
+  [10, "Noviembre"],
+  [11, "Diciembre"]
+]);
 const todayDate = getCurrentDate();
 
 export function render() {
@@ -21,7 +35,7 @@ export function render() {
     // Cambiamos el atributo 'data-view' a 'monthly' usando dataset
     bookingCalendar.dataset.view = 'weekly';
     const weekDays = anchorDate(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
-    renderWeekly(weekDays);
+    renderWeekly(weekDays, currentDate.getMonth(), currentDate.getFullYear());
   }
 }
 
@@ -96,72 +110,114 @@ function renderMonthly(currentDate) {
         daysGrid.appendChild(nuevoDia);
     }
 }
+//     console.log("Rendirizando vista semanal");
+//     console.log(weekDays);
+//     const monthCurrent = todayDate.getMonth();
 
-function renderWeekly(weekDays) {
-    console.log("Rendirizando vista semanal");
-    const monthCurrent = todayDate.getMonth();
+//     // daysGrid.innerHTML = "";
 
-    daysGrid.innerHTML = "";
+//     // console.log(weekDays[0]);
+//     // console.log(todayDate.getDate());
+//     // console.log(todayDate.getMonth());
+//     // console.log(monthCurrent);
 
-    console.log(weekDays[0]);
-    console.log(todayDate.getDate());
-    console.log(todayDate.getMonth());
-    console.log(monthCurrent);
+//     for (let day = 0; day <= 6; day++) {
+//         if (weekDays[day] === todayDate.getDate() && todayDate.getMonth() === monthCurrent) {
+//             const nuevoDia = document.createElement('div');
+//             nuevoDia.classList.add("day");
+//             nuevoDia.classList.add("selected");
 
-    for (let day = 0; day <= 6; day++) {
-        if (weekDays[day] === todayDate.getDate() && todayDate.getMonth() === monthCurrent) {
-            const nuevoDia = document.createElement('div');
-            nuevoDia.classList.add("day");
+//             const dayName = document.createElement('span');
+//             dayName.classList.add("day-name");
+//             dayName.textContent = daysWeekSpanish[day];
+//             nuevoDia.appendChild(dayName);
+
+//             const dayNumber = document.createElement('span');
+//             dayNumber.classList.add("day-number");
+//             dayNumber.textContent = weekDays[day];
+//             nuevoDia.appendChild(dayNumber);
+
+//             const etiquetaToday = document.createElement('span');
+//             etiquetaToday.textContent = "HOY";
+//             nuevoDia.appendChild(etiquetaToday);
+
+//             daysGrid.appendChild(nuevoDia);
+//         }
+//         else if (weekDays[day] > todayDate.getDate() ) {
+//             const nuevoDia = document.createElement('div');
+//             nuevoDia.classList.add("day");
+
+//             const dayName = document.createElement('span');
+//             dayName.classList.add("day-name");
+//             dayName.textContent = daysWeekSpanish[day];
+//             nuevoDia.appendChild(dayName);
+
+//             const dayNumber = document.createElement('span');
+//             dayNumber.classList.add("day-number");
+//             dayNumber.textContent = weekDays[day];
+//             nuevoDia.appendChild(dayNumber);
+
+//             daysGrid.appendChild(nuevoDia);
+//         }
+//         else {
+//             const nuevoDia = document.createElement('div');
+//             nuevoDia.classList.add("day");
+//             const dayName = document.createElement('span');
+//             dayName.classList.add("day-name");
+//             dayName.textContent = daysWeekSpanish[day];
+//             nuevoDia.appendChild(dayName);
+
+//             const dayNumber = document.createElement('span');
+//             dayNumber.classList.add("day-number");
+//             dayNumber.textContent = weekDays[day];
+//             nuevoDia.appendChild(dayNumber);
+
+//             daysGrid.appendChild(nuevoDia);
+//         }
+//     }
+
+// }
+
+// Asegúrate de tener esto fuera de la función
+
+function renderWeekly(weekDays, month, year) {
+    weekDays.forEach((dayNumber, index) => {
+
+        // Ajuste para que Lunes sea 0 (0=Lun, 1=Mar, ..., 6=Dom)
+        const dayOfWeekIndex = daysWeekSpanish[index];
+
+        const nuevoDia = document.createElement('div');
+        nuevoDia.classList.add("day");
+
+        const spanName = document.createElement('span');
+        spanName.classList.add("day-name");
+        spanName.textContent = dayOfWeekIndex; 
+
+        const spanNum = document.createElement('span');
+        spanNum.classList.add("day-number");
+        spanNum.textContent = dayNumber;
+
+        // Guardamos el mes y año en el elemento HTML
+        nuevoDia.dataset.monthName = nameMonthsMap.get(month); 
+        nuevoDia.dataset.year = year;
+
+        nuevoDia.appendChild(spanName);
+        nuevoDia.appendChild(spanNum);
+
+        // Lógica de "Hoy"
+        if (todayDate.getDate() === dayNumber && month === todayDate.getMonth() && year === todayDate.getFullYear()) {
             nuevoDia.classList.add("selected");
-
-            const dayName = document.createElement('span');
-            dayName.classList.add("day-name");
-            dayName.textContent = daysWeekSpanish[day];
-            nuevoDia.appendChild(dayName);
-
-            const dayNumber = document.createElement('span');
-            dayNumber.classList.add("day-number");
-            dayNumber.textContent = weekDays[day];
-            nuevoDia.appendChild(dayNumber);
-
             const etiquetaToday = document.createElement('span');
             etiquetaToday.textContent = "HOY";
             nuevoDia.appendChild(etiquetaToday);
-
-            daysGrid.appendChild(nuevoDia);
         }
-        else if (weekDays[day] > todayDate.getDate() ) {
-            const nuevoDia = document.createElement('div');
-            nuevoDia.classList.add("day");
 
-            const dayName = document.createElement('span');
-            dayName.classList.add("day-name");
-            dayName.textContent = daysWeekSpanish[day];
-            nuevoDia.appendChild(dayName);
-
-            const dayNumber = document.createElement('span');
-            dayNumber.classList.add("day-number");
-            dayNumber.textContent = weekDays[day];
-            nuevoDia.appendChild(dayNumber);
-
-            daysGrid.appendChild(nuevoDia);
+        daysGrid.appendChild(nuevoDia);
+        
+        // Notificamos al observador que vigile este nuevo día
+        if (window.headerObserver) {
+            window.headerObserver.observe(nuevoDia);
         }
-        else {
-            const nuevoDia = document.createElement('div');
-            nuevoDia.classList.add("day-deactive");
-
-            const dayName = document.createElement('span');
-            dayName.classList.add("day-name");
-            dayName.textContent = daysWeekSpanish[day];
-            nuevoDia.appendChild(dayName);
-
-            const dayNumber = document.createElement('span');
-            dayNumber.classList.add("day-number");
-            dayNumber.textContent = weekDays[day];
-            nuevoDia.appendChild(dayNumber);
-
-            daysGrid.appendChild(nuevoDia);
-        }
-    }
-
+    });
 }
+
