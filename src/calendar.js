@@ -1,12 +1,15 @@
 // src/calendar.js
 import { render } from "./render.js";
 import { navigateMonth, navigateWeek } from './navigation.js';
+import { getCurrentDate, getCurrentMonth } from './utils.js';
+
 
 // SELECTORES
 const btnPrevious = document.getElementById("btnPrevious");
 const btnNext = document.getElementById("btnNext");
 const daysGrid = document.getElementById("daysContainer");
 const contenedor = document.querySelector('.days-grid');
+const currentView = document.querySelector('.booking-calendar').dataset.view;
 
 // Configuración del observador
 const observerOptions = {
@@ -34,30 +37,30 @@ window.headerObserver = new IntersectionObserver((entries) => {
 // FUNCIONES
 
 function initCalendar() {
+    const initialDate = getCurrentDate();
+    dateDisplay.textContent = `${getCurrentMonth(initialDate.getMonth())} ${initialDate.getFullYear()}`;
     render();
     updateNavigationButtons();
 }
 
 function updateNavigationButtons() {
-    const btnPrevious = document.getElementById("btnPrevious");
-    const daysContainer = document.getElementById("daysContainer");
-
     // Si el scroll está casi al inicio (menos de 10px)
-    if (daysContainer.scrollLeft < 10) {
-        btnPrevious.style.opacity = "0.3";
-        btnPrevious.style.pointerEvents = "none"; // Desactiva clics
-        btnPrevious.style.cursor = "default";
-    } else {
-        btnPrevious.style.opacity = "1";
-        btnPrevious.style.pointerEvents = "auto"; // Activa clics
-        btnPrevious.style.cursor = "pointer";
+    if (currentView === 'weekly') {
+        if (daysGrid.scrollLeft < 10) {
+          btnPrevious.style.opacity = "0.3";
+          btnPrevious.style.pointerEvents = "none"; // Desactiva clics
+          btnPrevious.style.cursor = "default";
+        } else {
+            btnPrevious.style.opacity = "1";
+            btnPrevious.style.pointerEvents = "auto"; // Activa clics
+            btnPrevious.style.cursor = "pointer";
+        }
     }
 }
 
 
 // EVENTOS
 btnPrevious.addEventListener("click", () => {
-  const currentView = document.querySelector('.booking-calendar').dataset.view;
   if (currentView === 'monthly') {
     navigateMonth('prev');
   } else if (currentView === 'weekly') {
@@ -67,7 +70,6 @@ btnPrevious.addEventListener("click", () => {
 });
 
 btnNext.addEventListener("click", () => {
-  const currentView = document.querySelector('.booking-calendar').dataset.view;
   if (currentView === 'monthly') {
     navigateMonth('next');
   } else if (currentView === 'weekly') {
