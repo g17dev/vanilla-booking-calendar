@@ -27,6 +27,9 @@ const todayDate = getCurrentDate();
 
 export function render() {
   const { view, currentDate } = state;
+  if (window.headerObserver) {
+      window.headerObserver.disconnect();
+  }
 
   if (view === 'monthly') {
     bookingCalendar.dataset.view = 'monthly';
@@ -110,75 +113,6 @@ function renderMonthly(currentDate) {
         daysGrid.appendChild(nuevoDia);
     }
 }
-//     console.log("Rendirizando vista semanal");
-//     console.log(weekDays);
-//     const monthCurrent = todayDate.getMonth();
-
-//     // daysGrid.innerHTML = "";
-
-//     // console.log(weekDays[0]);
-//     // console.log(todayDate.getDate());
-//     // console.log(todayDate.getMonth());
-//     // console.log(monthCurrent);
-
-//     for (let day = 0; day <= 6; day++) {
-//         if (weekDays[day] === todayDate.getDate() && todayDate.getMonth() === monthCurrent) {
-//             const nuevoDia = document.createElement('div');
-//             nuevoDia.classList.add("day");
-//             nuevoDia.classList.add("selected");
-
-//             const dayName = document.createElement('span');
-//             dayName.classList.add("day-name");
-//             dayName.textContent = daysWeekSpanish[day];
-//             nuevoDia.appendChild(dayName);
-
-//             const dayNumber = document.createElement('span');
-//             dayNumber.classList.add("day-number");
-//             dayNumber.textContent = weekDays[day];
-//             nuevoDia.appendChild(dayNumber);
-
-//             const etiquetaToday = document.createElement('span');
-//             etiquetaToday.textContent = "HOY";
-//             nuevoDia.appendChild(etiquetaToday);
-
-//             daysGrid.appendChild(nuevoDia);
-//         }
-//         else if (weekDays[day] > todayDate.getDate() ) {
-//             const nuevoDia = document.createElement('div');
-//             nuevoDia.classList.add("day");
-
-//             const dayName = document.createElement('span');
-//             dayName.classList.add("day-name");
-//             dayName.textContent = daysWeekSpanish[day];
-//             nuevoDia.appendChild(dayName);
-
-//             const dayNumber = document.createElement('span');
-//             dayNumber.classList.add("day-number");
-//             dayNumber.textContent = weekDays[day];
-//             nuevoDia.appendChild(dayNumber);
-
-//             daysGrid.appendChild(nuevoDia);
-//         }
-//         else {
-//             const nuevoDia = document.createElement('div');
-//             nuevoDia.classList.add("day");
-//             const dayName = document.createElement('span');
-//             dayName.classList.add("day-name");
-//             dayName.textContent = daysWeekSpanish[day];
-//             nuevoDia.appendChild(dayName);
-
-//             const dayNumber = document.createElement('span');
-//             dayNumber.classList.add("day-number");
-//             dayNumber.textContent = weekDays[day];
-//             nuevoDia.appendChild(dayNumber);
-
-//             daysGrid.appendChild(nuevoDia);
-//         }
-//     }
-
-// }
-
-// Asegúrate de tener esto fuera de la función
 
 function renderWeekly(weekDays, month, year) {
     weekDays.forEach((dayNumber, index) => {
