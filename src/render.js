@@ -99,13 +99,17 @@ function renderMonthly(currentDate) {
 
 function renderWeekly(weekDays) {
     console.log("Rendirizando vista semanal");
+    const monthCurrent = todayDate.getMonth();
 
     daysGrid.innerHTML = "";
 
-    const diaActual = state.currentDate.getDate();
+    console.log(weekDays[0]);
+    console.log(todayDate.getDate());
+    console.log(todayDate.getMonth());
+    console.log(monthCurrent);
 
     for (let day = 0; day <= 6; day++) {
-        if (weekDays[day] === diaActual && monthInitial === monthCurrent) {
+        if (weekDays[day] === todayDate.getDate() && todayDate.getMonth() === monthCurrent) {
             const nuevoDia = document.createElement('div');
             nuevoDia.classList.add("day");
             nuevoDia.classList.add("selected");
@@ -126,7 +130,7 @@ function renderWeekly(weekDays) {
 
             daysGrid.appendChild(nuevoDia);
         }
-        else if (weekDays[day] > diaActual ) {
+        else if (weekDays[day] > todayDate.getDate() ) {
             const nuevoDia = document.createElement('div');
             nuevoDia.classList.add("day");
 
