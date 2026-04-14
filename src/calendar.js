@@ -1,162 +1,108 @@
-const monthInitial = new Date().getMonth();
-let monthCurrent = new Date().getMonth();
-let yearCurrent = new Date().getFullYear()
-const date = new Date();
-const nameMonthsMap = new Map([
-  [0, "Enero"],
-  [1, "Febrero"],
-  [2, "Marzo"],
-  [3, "Abril"],
-  [4, "Mayo"],
-  [5, "Junio"],
-  [6, "Julio"],
-  [7, "Agosto"],
-  [8, "Septiembre"],
-  [9, "Octubre"],
-  [10, "Noviembre"],
-  [11, "Diciembre"]
-]);
-const daysWeekSpanish = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
-
+// src/calendar.js
+import { render } from "./render.js";
+import { navigateMonth, navigateWeek } from './navigation.js';
 
 // SELECTORES
-const dateDisplay = document.getElementById("dateDisplay");
 const btnPrevious = document.getElementById("btnPrevious");
 const btnNext = document.getElementById("btnNext");
-const daysNames = document.querySelector(".day-names"); // Nota el punto (.) antes de la clase
 const daysGrid = document.getElementById("daysContainer");
+const contenedor = document.querySelector('.days-grid');
+
+// Configuración del observador
+const observerOptions = {
+    root: document.getElementById("daysContainer"), // El contenedor del scroll
+    threshold: 0.6 // El día debe verse un 60% para que cuente como "activo"
+};
+
+// Definimos el observador globalmente para que render.js lo vea
+window.headerObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        // Cuando un día entra en la zona de visualización principal
+        if (entry.isIntersecting) {
+            const { monthName, year } = entry.target.dataset;
+            
+            // Actualizamos el display del calendario
+            if (monthName && year) {
+                const dateDisplay = document.getElementById("dateDisplay");
+                dateDisplay.textContent = `${monthName} ${year}`;
+            }
+        }
+    });
+}, observerOptions);
+
 
 // FUNCIONES
 
-function getDate(month, year) {
-    const newMonth = nameMonthsMap.get(month);
-    return `${newMonth} ${year}`;
+function initCalendar() {
+    render();
+    updateNavigationButtons();
 }
 
-function nextMonth(id) {
-    const dateCurrent = dateDisplay.textContent.split(' ');
-    monthCurrent = [...nameMonthsMap.entries()].find(([_, nombre]) => nombre === dateCurrent[0])?.[0];
-    yearCurrent = dateCurrent[1];
+function updateNavigationButtons() {
+    const btnPrevious = document.getElementById("btnPrevious");
+    const daysContainer = document.getElementById("daysContainer");
 
-    if (id === 'btnPrevious') {
-        monthCurrent -= 1;
-        if (monthCurrent === -1)
-        {
-            yearCurrent = Number(yearCurrent);
-            yearCurrent -= 1;
-            yearCurrent = String(yearCurrent);
-            monthCurrent = 11;
-            dateDisplay.textContent = getDate(monthCurrent, yearCurrent);
-            renderCalendar();
-        }
-        dateDisplay.textContent = getDate(monthCurrent, yearCurrent);
-        renderCalendar();
-    }
-    else {
-        monthCurrent += 1;
-        if (monthCurrent === 12) {
-            yearCurrent = Number(yearCurrent);
-            yearCurrent += 1;
-            yearCurrent = String(yearCurrent);
-            monthCurrent = 0;
-            dateDisplay.textContent = getDate(monthCurrent, yearCurrent);
-            renderCalendar();
-        }
-        dateDisplay.textContent = getDate(monthCurrent, yearCurrent);
-        renderCalendar();
-    }
-}
-
-function renderDayWeek() {
-    daysWeekSpanish.forEach(dayName => {
-        const dayWeek = document.createElement('div');
-        dayWeek.classList.add("day-week");
-        dayWeek.textContent = dayName;
-        daysNames.appendChild(dayWeek);
-    });
-}
-
-function renderCalendar() {
-    daysContainer.innerHTML = "";
-
-    // datos mes anterior
-    const totalDiasMesAnterior = new Date(Number(yearCurrent), Number(monthCurrent-1) + 1, 0).getDate();
-    const primerDiaSemana = new Date(Number(yearCurrent), Number(monthCurrent), 1).getDay();
-    const diasMesAnterior = primerDiaSemana - 2;
-    
-    // datos mes actual
-    const diaActual = date.getDate();
-    const totalDiasMesActual = new Date(Number(yearCurrent), Number(monthCurrent) + 1, 0).getDate();    
-    const fechaUltimoDiaMesActual = new Date(Number(yearCurrent), Number(monthCurrent) + 1, 0);
-    const ultimoDiaMes = fechaUltimoDiaMesActual.getDay();
-
-    // Bucle para dias del mes anterior
-    for (day = totalDiasMesAnterior-diasMesAnterior; day <= totalDiasMesAnterior; day++) {
-        const nuevoDia = document.createElement('div');
-        nuevoDia.classList.add("day-month-before");
-        nuevoDia.textContent = day;
-        daysGrid.appendChild(nuevoDia);
-    }
-
-    // Bucle insertar dias
-    for (day = 1; day <= totalDiasMesActual; day++) {
-
-        if (day === diaActual && monthInitial === monthCurrent) {
-            const nuevoDia = document.createElement('div');
-            nuevoDia.classList.add("day");
-            nuevoDia.classList.add("selected");
-            nuevoDia.textContent = day;
-            
-            const etiquetaToday = document.createElement('span');
-            etiquetaToday.textContent = "HOY";
-            nuevoDia.appendChild(etiquetaToday);
-
-            daysGrid.appendChild(nuevoDia);
-        }
-        else if (day > diaActual ) {
-            const nuevoDia = document.createElement('div');
-            nuevoDia.classList.add("day");
-            nuevoDia.textContent = day;
-            daysGrid.appendChild(nuevoDia);
-        }
-        else {
-            const nuevoDia = document.createElement('div');
-            nuevoDia.classList.add("day-deactive");
-            nuevoDia.textContent = day;
-            daysGrid.appendChild(nuevoDia);
-        }
-    }
-
-    const diasProximosMes = 7 - ultimoDiaMes;
-
-    // Bucle para dias del proximo mes
-    for (day = 1; day <= diasProximosMes; day++) {
-        const nuevoDia = document.createElement('div');
-        nuevoDia.classList.add("day-month-after");
-        nuevoDia.textContent = day;
-        daysGrid.appendChild(nuevoDia);
+    // Si el scroll está casi al inicio (menos de 10px)
+    if (daysContainer.scrollLeft < 10) {
+        btnPrevious.style.opacity = "0.3";
+        btnPrevious.style.pointerEvents = "none"; // Desactiva clics
+        btnPrevious.style.cursor = "default";
+    } else {
+        btnPrevious.style.opacity = "1";
+        btnPrevious.style.pointerEvents = "auto"; // Activa clics
+        btnPrevious.style.cursor = "pointer";
     }
 }
 
 
 // EVENTOS
-btnPrevious.addEventListener("click", () => nextMonth("btnPrevious"));
-btnNext.addEventListener("click", () => nextMonth("btnNext"));
+btnPrevious.addEventListener("click", () => {
+  const currentView = document.querySelector('.booking-calendar').dataset.view;
+  if (currentView === 'monthly') {
+    navigateMonth('prev');
+  } else if (currentView === 'weekly') {
+    //navigateWeek('prev');
+    contenedor.scrollBy({ left: -865, behavior: 'smooth' });
+  }
+});
+
+btnNext.addEventListener("click", () => {
+  const currentView = document.querySelector('.booking-calendar').dataset.view;
+  if (currentView === 'monthly') {
+    navigateMonth('next');
+  } else if (currentView === 'weekly') {
+    navigateWeek('next');
+    contenedor.scrollBy({ left: 865, behavior: 'smooth' });
+  }
+});
+
 daysGrid.addEventListener("click", (e) => {
-    const day = e.target.closest(".day")
+  const day = e.target.closest(".day");
 
-    if (day) {
-        const seleccionadoPrevio = daysGrid.querySelector(".day.selected");
+  if (day) {
+    const seleccionadoPrevio = daysGrid.querySelector(".day.selected");
 
-        if (seleccionadoPrevio) {
-            seleccionadoPrevio.classList.remove("selected");
-        }
-
-        day.classList.add("selected");
+    if (seleccionadoPrevio) {
+      seleccionadoPrevio.classList.remove("selected");
     }
+
+    day.classList.add("selected");
+  }
+});
+
+daysGrid.addEventListener('scroll', () => {
+    // Si el usuario llega al final del scroll a la derecha
+    if (daysContainer.scrollLeft + daysContainer.offsetWidth >= daysContainer.scrollWidth) {
+        navigateWeek('next');
+    }
+    
+    // Si llega al principio a la izquierda
+    if (daysContainer.scrollLeft === 0){
+
+    }
+    
+    updateNavigationButtons();
 });
 
 // INICIALIZACION
-dateDisplay.textContent = `${nameMonthsMap.get(date.getMonth())} ${date.getFullYear()}`;
-renderDayWeek();
-renderCalendar();
+initCalendar();
