@@ -1,3 +1,8 @@
+// src/calendar.js
+import { render } from "./render.js";
+import { navigateMonth, navigateWeek } from './navigation.js';
+
+
 // Variables
 const monthInitial = new Date().getMonth();
 let monthCurrent = new Date().getMonth();
@@ -9,7 +14,7 @@ const nameMonthsMap = new Map([
   [2, "Marzo"],
   [3, "Abril"],
   [4, "Mayo"],
-  [5, "Junio"],
+  [5, "Junio"], 
   [6, "Julio"],
   [7, "Agosto"],
   [8, "Septiembre"],
@@ -31,16 +36,7 @@ const bodyCalendar = document.querySelector(".calendar-body");
 // FUNCIONES
 
 function initCalendar() {
-    // Leer el modo actual ('monthly' o 'weekly')
-    const currentView = calendar.getAttribute('data-view');
-    
-    if (currentView === 'monthly') {
-        console.log("renderizar vista mensual");
-        renderMonthly();
-    } else if (currentView === 'weekly') {
-        const weekDays = anchorDate(yearCurrent, monthInitial, date.getDate());
-        renderWeekly(weekDays);
-    }
+    render();
 }
 
 function renderMonthly() {
@@ -68,7 +64,7 @@ function renderMonthly() {
     const ultimoDiaMes = fechaUltimoDiaMesActual.getDay();
 
     // Bucle para dias del mes anterior
-    for (day = totalDiasMesAnterior-diasMesAnterior; day <= totalDiasMesAnterior; day++) {
+    for (let day = totalDiasMesAnterior-diasMesAnterior; day <= totalDiasMesAnterior; day++) {
         const nuevoDia = document.createElement('div');
         nuevoDia.classList.add("day-month-before");
         nuevoDia.textContent = day;
@@ -76,7 +72,7 @@ function renderMonthly() {
     }
 
     // Bucle insertar dias
-    for (day = 1; day <= totalDiasMesActual; day++) {
+    for (let day = 1; day <= totalDiasMesActual; day++) {
 
         if (day === diaActual && monthInitial === monthCurrent) {
             const nuevoDia = document.createElement('div');
@@ -107,7 +103,7 @@ function renderMonthly() {
     const diasProximosMes = 7 - ultimoDiaMes;
 
     // Bucle para dias del proximo mes
-    for (day = 1; day <= diasProximosMes; day++) {
+    for (let day = 1; day <= diasProximosMes; day++) {
         const nuevoDia = document.createElement('div');
         nuevoDia.classList.add("day-month-after");
         nuevoDia.textContent = day;
@@ -125,7 +121,7 @@ function renderWeekly(weekDays) {
 
     const diaActual = date.getDate();
 
-    for (day = 0; day <= 6; day++) {
+    for (let day = 0; day <= 6; day++) {
         if (weekDays[day] === diaActual && monthInitial === monthCurrent) {
             const nuevoDia = document.createElement('div');
             nuevoDia.classList.add("day");
@@ -261,21 +257,36 @@ function nextMonth(id) {
 }
 
 // EVENTOS
-btnPrevious.addEventListener("click", () => nextMonth("btnPrevious"));
-btnNext.addEventListener("click", () => nextMonth("btnNext"));
+btnPrevious.addEventListener("click", () => {
+  const currentView = document.querySelector('.booking-calendar').dataset.view;
+  if (currentView === 'monthly') {
+    navigateMonth('prev');
+  } else if (currentView === 'weekly') {
+    navigateWeek('prev');
+  }
+});
+
+btnNext.addEventListener("click", () => {
+  const currentView = document.querySelector('.booking-calendar').dataset.view;
+  if (currentView === 'monthly') {
+    navigateMonth('next');
+  } else if (currentView === 'weekly') {
+    navigateWeek('next');
+  }
+});
 
 daysGrid.addEventListener("click", (e) => {
-    const day = e.target.closest(".day")
+  const day = e.target.closest(".day");
 
-    if (day) {
-        const seleccionadoPrevio = daysGrid.querySelector(".day.selected");
+  if (day) {
+    const seleccionadoPrevio = daysGrid.querySelector(".day.selected");
 
-        if (seleccionadoPrevio) {
-            seleccionadoPrevio.classList.remove("selected");
-        }
-
-        day.classList.add("selected");
+    if (seleccionadoPrevio) {
+      seleccionadoPrevio.classList.remove("selected");
     }
+
+    day.classList.add("selected");
+  }
 });
 
 // INICIALIZACION
