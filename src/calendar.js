@@ -3,108 +3,95 @@ import { render } from "./render.js";
 import { navigateMonth, navigateWeek } from './navigation.js';
 import { getCurrentDate, getCurrentMonth } from './utils.js';
 
+// 1. Exportamos la función aceptando el shadowRoot como 'root'
+export function initCalendar(root) {
+    
+    // 2. Selectores locales (cambiamos document por root)
+    const btnPrevious = root.getElementById("btnPrevious");
+    const btnNext = root.getElementById("btnNext");
+    const daysGrid = root.getElementById("daysContainer");
+    const dateDisplay = root.getElementById("dateDisplay");
+    const calendarElement = root.querySelector('.booking-calendar');
 
-// SELECTORES
-const btnPrevious = document.getElementById("btnPrevious");
-const btnNext = document.getElementById("btnNext");
-const daysGrid = document.getElementById("daysContainer");
-const contenedor = document.querySelector('.days-grid');
-const currentView = document.querySelector('.booking-calendar').dataset.view;
+    // 3. El Observador debe configurarse con el nuevo root
+    const observerOptions = {
+        root: daysGrid, 
+        threshold: 0.6
+    };
 
-// Configuración del observador
-const observerOptions = {
-    root: document.getElementById("daysContainer"), // El contenedor del scroll
-    threshold: 0.6 // El día debe verse un 60% para que cuente como "activo"
-};
+    // Definimos el observador globalmente para que render.js lo vea
+    window.headerObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            // Cuando un día entra en la zona de visualización principal
+            if (entry.isIntersecting) {
+                const { monthName, year } = entry.target.dataset;
+                
+                // Actualizamos el display del calendario
+                if (monthName && year) {
+                    const dateDisplay = root.getElementById("dateDisplay");
+                    dateDisplay.textContent = `${monthName} ${year}`;
+                }
+            }
+        });
+    }, observerOptions);
 
-// Definimos el observador globalmente para que render.js lo vea
-window.headerObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        // Cuando un día entra en la zona de visualización principal
-        if (entry.isIntersecting) {
-            const { monthName, year } = entry.target.dataset;
-            
-            // Actualizamos el display del calendario
-            if (monthName && year) {
-                const dateDisplay = document.getElementById("dateDisplay");
-                dateDisplay.textContent = `${monthName} ${year}`;
+    // 4. Funciones internas actualizadas
+    function updateNavigationButtons() {
+        const currentView = calendarElement.dataset.view;
+
+        btnPrevious.style.opacity = "1";
+        btnPrevious.style.pointerEvents = "auto";
+
+        if (currentView === 'weekly') {
+            // Solo deshabilitar si estamos al inicio del scroll en la semana
+            if (daysGrid.scrollLeft < 10) {
+                btnPrevious.style.opacity = "0.3";
+                btnPrevious.style.pointerEvents = "none";
             }
         }
+    }
+
+    // 5. Eventos vinculados a los elementos locales
+    btnPrevious.addEventListener("click", () => {
+        const currentView = calendarElement.dataset.view;
+        if (currentView === 'monthly') {
+            navigateMonth('prev', root);
+        } else {
+            daysGrid.scrollBy({ left: -865, behavior: 'smooth' });
+        }
     });
-}, observerOptions);
 
+    btnNext.addEventListener("click", () => {
+        const currentView = calendarElement.dataset.view;
+        if (currentView === 'monthly') {
+            navigateMonth('next', root);
+        } else {
+            navigateWeek('next', root);
+            daysGrid.scrollBy({ left: 865, behavior: 'smooth' });
+        }
+    });
 
-// FUNCIONES
+    daysGrid.addEventListener("click", (e) => {
+        const day = e.target.closest(".day");
+        if (day) {
+            const seleccionadoPrevio = daysGrid.querySelector(".day.selected");
+            if (seleccionadoPrevio) seleccionadoPrevio.classList.remove("selected");
+            day.classList.add("selected");
+        }
+    });
 
-function initCalendar() {
+    daysGrid.addEventListener('scroll', () => {
+        if (daysGrid.scrollLeft + daysGrid.offsetWidth >= daysGrid.scrollWidth) {
+            navigateWeek('next', root);
+        }
+        updateNavigationButtons();
+    });
+
+    // 6. Ejecución inicial
     const initialDate = getCurrentDate();
     dateDisplay.textContent = `${getCurrentMonth(initialDate.getMonth())} ${initialDate.getFullYear()}`;
-    render();
+    
+    // Pasamos el root también al render
+    render(root); 
     updateNavigationButtons();
 }
-
-function updateNavigationButtons() {
-    // Si el scroll está casi al inicio (menos de 10px)
-    if (currentView === 'weekly') {
-        if (daysGrid.scrollLeft < 10) {
-          btnPrevious.style.opacity = "0.3";
-          btnPrevious.style.pointerEvents = "none"; // Desactiva clics
-          btnPrevious.style.cursor = "default";
-        } else {
-            btnPrevious.style.opacity = "1";
-            btnPrevious.style.pointerEvents = "auto"; // Activa clics
-            btnPrevious.style.cursor = "pointer";
-        }
-    }
-}
-
-
-// EVENTOS
-btnPrevious.addEventListener("click", () => {
-  if (currentView === 'monthly') {
-    navigateMonth('prev');
-  } else if (currentView === 'weekly') {
-    //navigateWeek('prev');
-    contenedor.scrollBy({ left: -865, behavior: 'smooth' });
-  }
-});
-
-btnNext.addEventListener("click", () => {
-  if (currentView === 'monthly') {
-    navigateMonth('next');
-  } else if (currentView === 'weekly') {
-    navigateWeek('next');
-    contenedor.scrollBy({ left: 865, behavior: 'smooth' });
-  }
-});
-
-daysGrid.addEventListener("click", (e) => {
-  const day = e.target.closest(".day");
-
-  if (day) {
-    const seleccionadoPrevio = daysGrid.querySelector(".day.selected");
-
-    if (seleccionadoPrevio) {
-      seleccionadoPrevio.classList.remove("selected");
-    }
-
-    day.classList.add("selected");
-  }
-});
-
-daysGrid.addEventListener('scroll', () => {
-    // Si el usuario llega al final del scroll a la derecha
-    if (daysContainer.scrollLeft + daysContainer.offsetWidth >= daysContainer.scrollWidth) {
-        navigateWeek('next');
-    }
-    
-    // Si llega al principio a la izquierda
-    if (daysContainer.scrollLeft === 0){
-
-    }
-    
-    updateNavigationButtons();
-});
-
-// INICIALIZACION
-initCalendar();

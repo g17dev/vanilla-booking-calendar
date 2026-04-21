@@ -50,11 +50,13 @@ body {
 
 .calendar-header #btnPrevious,
 .calendar-header #btnNext {
+    all: unset; 
     border: none;
     background: none;
-    font-size: 1rem;
+    font-size: 1.4rem;
     cursor: pointer;
     transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    
 }
 
 .calendar-header #btnPrevious:hover,
@@ -229,7 +231,7 @@ body {
     transform: scale(1.08);
     background-color: #9E001F;
     color: #ffffff;
-    box-shadow: 0 8px 30px rgba(158, 0, 31, 0.2); 
+    box-shadow: 0 4px 15px rgba(158, 0, 31, 0.08);
     cursor: default;
 }
 
