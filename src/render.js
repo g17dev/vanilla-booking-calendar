@@ -91,6 +91,10 @@
             const nuevoDia = document.createElement('div');
             nuevoDia.textContent = day;
 
+            // --- NUEVO: Formatear la fecha como YYYY-MM-DD ---
+            const isoDate = fechaGenerada.toISOString().split('T')[0];
+            nuevoDia.dataset.date = isoDate; // <--- ESTO ES LO QUE FALTA
+
             // Atributos para el Observer
             nuevoDia.dataset.monthName = nameMonthsMap.get(monthCurrent);
             nuevoDia.dataset.year = yearCurrent;
@@ -132,6 +136,11 @@
             const dayOfWeekIndex = daysWeekSpanish[index];
 
             const nuevoDia = document.createElement('div');
+            
+            const fechaGenerada = new Date(year, month, dayNumber);
+            const isoDate = fechaGenerada.toISOString().split('T')[0]; 
+            nuevoDia.dataset.date = isoDate;
+
             nuevoDia.classList.add("day");
 
             const spanName = document.createElement('span');

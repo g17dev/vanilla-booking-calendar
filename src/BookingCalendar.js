@@ -8,27 +8,69 @@ class BookingCalendar extends HTMLElement {
         this.attachShadow({ mode: 'open' });
     }
 
-    // Método público para cambiar la vista desde JS externo
+    _dispatchCurrentSelection() {
+        setTimeout(() => {
+            const initial = this.shadowRoot.querySelector('.day.selected');
+            if (initial && initial.dataset.date) {
+                this.dispatchEvent(new CustomEvent('date-change', {
+                    detail: { date: initial.dataset.date, element: initial },
+                    bubbles: true,
+                    composed: true
+                }));
+                console.log("Evento disparado:", initial.dataset.date);
+            }
+        }, 50);
+    }
+
     set view(value) {
         const calendar = this.shadowRoot.querySelector('.booking-calendar');
         if (calendar) {
             calendar.dataset.view = value;
-            setState({view: value});
-            if (calendar === 'weekly') {
-                setState({weeklyAnchorDate: new Date()});
-                console.log("Reenderizando vista semanal...");
+            setState({ view: value });
+            
+            // CORRECCIÓN: Usar 'value' para comparar, no 'calendar'
+            if (value === 'weekly') {
+                setState({ weeklyAnchorDate: new Date() });
             }
+            
             initCalendar(this.shadowRoot);
+            
+            // CORRECCIÓN: Forzar el evento al cambiar de vista
+            this._dispatchCurrentSelection();
         }
     }
 
     async connectedCallback() {
-        // 1. Cargamos la estructura HTML y el CSS primero
         await this.setupComponent();
+        const daysContainer = this.shadowRoot.querySelector('#daysContainer');
+
+        const observerDaySelected = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.attributeName === 'class' && 
+                    mutation.target.classList.contains('selected')) {
+                    const target = mutation.target;
+                    const dateValue = target.dataset.date;
+                    if (dateValue) {
+                        this.dispatchEvent(new CustomEvent('date-change', {
+                            detail: { date: dateValue, element: target },
+                            bubbles: true,
+                            composed: true
+                        }));
+                    }
+                }
+            });
+        });
+
+        observerDaySelected.observe(daysContainer, {
+            attributes: true,
+            subtree: true,
+            attributeFilter: ['class']
+        });
         
-        // 2. Inicializamos la lógica de eventos y el primer renderizado
-        // Importante: initCalendar ya llama a render(root) internamente
-        initCalendar(this.shadowRoot); 
+        initCalendar(this.shadowRoot);
+
+        // CORRECCIÓN: Una sola llamada al inicio es suficiente
+        this._dispatchCurrentSelection();
     }
 
     async setupComponent() {
